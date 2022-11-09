@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Tip Calculator 2</string>
+
+    <!-- quality of service input labels -->
+    <string name="quality_amazing_label">Amazing (20%)</string>
+    <string name="quality_good_label">Good (18%)</string>
+    <string name="quality_okay_label">Okay (15%)</string>
+    <string name="tip_calculator_header">Tip Calculator</string>
+    <string name="cost_of_service_label">Cost of Service</string>
+    <string name="round_up_tip_input_label">Round Up Tip</string>
+    <string name="service_quality_input_label">Service Quality</string>
+    <string name="calculate_button_label">Calculate Tip</string>
+    <string name="bill_total_label">Bill Total:</string>
+    <string name="tip_amount_label">Tip Amount:</string>
+
+</resources>
