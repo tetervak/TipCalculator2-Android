@@ -50,9 +50,6 @@ fun TipCalculatorScreen() {
             color = colorResource(id = R.color.pink_500)
         )
         CalculatorInputs()
-        Button(onClick = {}){
-            Text(text = stringResource(R.string.calculate_button_label))
-        }
         CalculatorOutputs()
 
     }
