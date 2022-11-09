@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.tetervak.tipcalculator2.model.ServiceQuality
+import ca.tetervak.tipcalculator2.model.calculateTip
 import ca.tetervak.tipcalculator2.ui.theme.TipCalculator2Theme
 import java.text.NumberFormat
 
@@ -48,6 +48,20 @@ fun TipCalculatorScreen() {
     val serviceQualityInput = remember { mutableStateOf(ServiceQuality.GOOD) }
     val roundUpTipInput = remember { mutableStateOf(true) }
 
+    // output states
+    val tipAmountOutput = remember { mutableStateOf(0.0) }
+    val billTotalOutput = remember { mutableStateOf(0.0) }
+
+    val recalculateOutputs = {
+        val tipData = calculateTip(
+            costOfService = costOfServiceInput.value.toDoubleOrNull() ?: 0.0,
+            serviceQuality = serviceQualityInput.value,
+            roundUpTip = roundUpTipInput.value
+        )
+        tipAmountOutput.value = tipData.tipAmount
+        billTotalOutput.value = tipData.billTotal
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,17 +80,20 @@ fun TipCalculatorScreen() {
             roundUpTip = roundUpTipInput.value,
             onChangeOfCostOfService = {
                 costOfServiceInput.value = it
+                recalculateOutputs()
             },
             onChangeOfServiceQuality = {
                 serviceQualityInput.value = it
+                recalculateOutputs()
             },
             onChangeOfRoundTip = {
                 roundUpTipInput.value = it
+                recalculateOutputs()
             }
         )
         CalculatorOutputs(
-            tipAmount = 18.0,
-            billTotal = 118.0
+            tipAmount = tipAmountOutput.value,
+            billTotal = billTotalOutput.value
         )
 
     }
