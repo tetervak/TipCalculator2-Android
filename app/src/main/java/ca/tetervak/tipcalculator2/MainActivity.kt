@@ -44,20 +44,21 @@ class MainActivity : ComponentActivity() {
 fun TipCalculatorScreen() {
 
     // input states
-    val inputUiSate = remember { mutableStateOf(InputUiState()) }
+    val inputUiState = remember { mutableStateOf(InputUiState()) }
 
     // output states
-    val tipAmountOutput = remember { mutableStateOf(0.0) }
-    val billTotalOutput = remember { mutableStateOf(0.0) }
+    val outputUiState = remember { mutableStateOf(OutputUiSate()) }
 
     val recalculateOutputs = {
         val tipData = calculateTip(
-            costOfService = inputUiSate.value.costOfService.toDoubleOrNull() ?: 0.0,
-            serviceQuality = inputUiSate.value.serviceQuality,
-            roundUpTip = inputUiSate.value.roundUpTip
+            costOfService = inputUiState.value.costOfService.toDoubleOrNull() ?: 0.0,
+            serviceQuality = inputUiState.value.serviceQuality,
+            roundUpTip = inputUiState.value.roundUpTip
         )
-        tipAmountOutput.value = tipData.tipAmount
-        billTotalOutput.value = tipData.billTotal
+        outputUiState.value = OutputUiSate(
+            tipAmount = tipData.tipAmount,
+            billTotal = tipData.billTotal
+        )
     }
 
     Column(
@@ -73,33 +74,31 @@ fun TipCalculatorScreen() {
             color = colorResource(id = R.color.pink_500)
         )
         CalculatorInputs(
-            inputUiState = inputUiSate.value,
+            inputUiState = inputUiState.value,
             onChangeOfCostOfService = {
-                val uiState = inputUiSate.value
-                inputUiSate.value = uiState.copy(costOfService = it)
+                val uiState = inputUiState.value
+                inputUiState.value = uiState.copy(costOfService = it)
                 recalculateOutputs()
             },
             onChangeOfServiceQuality = {
-                val uiState = inputUiSate.value
-                inputUiSate.value = uiState.copy(serviceQuality = it)
+                val uiState = inputUiState.value
+                inputUiState.value = uiState.copy(serviceQuality = it)
                 recalculateOutputs()
             },
             onChangeOfRoundTip = {
-                val uiState = inputUiSate.value
-                inputUiSate.value = uiState.copy(roundUpTip = it)
+                val uiState = inputUiState.value
+                inputUiState.value = uiState.copy(roundUpTip = it)
                 recalculateOutputs()
             }
         )
-        CalculatorOutputs(
-            tipAmount = tipAmountOutput.value,
-            billTotal = billTotalOutput.value
-        )
-
+        CalculatorOutputs(outputUiState.value)
     }
 }
 
 @Composable
-fun CalculatorOutputs(tipAmount: Double, billTotal: Double) {
+fun CalculatorOutputs(
+    outputUiSate: OutputUiSate,
+) {
     Card(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -113,7 +112,7 @@ fun CalculatorOutputs(tipAmount: Double, billTotal: Double) {
                         .wrapContentWidth(align = Alignment.End)
                 )
                 Text(
-                    text = formatCurrency(tipAmount),
+                    text = formatCurrency(outputUiSate.tipAmount),
                     fontSize = 20.sp,
                     color = colorResource(id = R.color.purple_500)
                 )
@@ -130,7 +129,7 @@ fun CalculatorOutputs(tipAmount: Double, billTotal: Double) {
                         .wrapContentWidth(align = Alignment.End)
                 )
                 Text(
-                    text = formatCurrency(billTotal),
+                    text = formatCurrency(outputUiSate.billTotal),
                     fontSize = 20.sp,
                     color = colorResource(id = R.color.purple_500)
                 )
