@@ -57,9 +57,6 @@ fun TipCalculatorScreen() {
             serviceQuality = ServiceQuality.GOOD,
             roundUpTip = true
         )
-        Button(onClick = {}) {
-            Text(text = stringResource(R.string.calculate_button_label))
-        }
         CalculatorOutputs(
             tipAmount = 18.0,
             billTotal = 118.0
