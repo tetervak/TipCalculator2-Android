@@ -13,10 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextInputService
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ca.tetervak.tipcalculator2.model.ServiceQuality
 import ca.tetervak.tipcalculator2.ui.theme.TipCalculator2Theme
+import java.text.NumberFormat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,20 +52,27 @@ fun TipCalculatorScreen() {
             fontSize = 24.sp,
             color = colorResource(id = R.color.pink_500)
         )
-        CalculatorInputs()
-        Button(onClick = {}){
+        CalculatorInputs(
+            costOfServiceInput = "100",
+            serviceQuality = ServiceQuality.GOOD,
+            roundUpTip = true
+        )
+        Button(onClick = {}) {
             Text(text = stringResource(R.string.calculate_button_label))
         }
-        CalculatorOutputs()
+        CalculatorOutputs(
+            tipAmount = 18.0,
+            billTotal = 118.0
+        )
 
     }
 }
 
 @Composable
-fun CalculatorOutputs() {
-    Card ( elevation = 4.dp, shape = RoundedCornerShape(8.dp) ){
-        Column (modifier = Modifier.padding(16.dp)) {
-            Row (
+fun CalculatorOutputs(tipAmount: Double, billTotal: Double) {
+    Card(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
@@ -73,15 +83,15 @@ fun CalculatorOutputs() {
                         .wrapContentWidth(align = Alignment.End)
                 )
                 Text(
-                    text = "$15.00",
+                    text = formatCurrency(tipAmount),
                     fontSize = 20.sp,
                     color = colorResource(id = R.color.purple_500)
                 )
             }
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding( top = 16.dp)
-            ){
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
                 Text(
                     text = stringResource(R.string.bill_total_label),
                     fontSize = 20.sp,
@@ -89,7 +99,8 @@ fun CalculatorOutputs() {
                         .sizeIn(minWidth = 112.dp)
                         .wrapContentWidth(align = Alignment.End)
                 )
-                Text( text = "$115.00",
+                Text(
+                    text = formatCurrency(billTotal),
                     fontSize = 20.sp,
                     color = colorResource(id = R.color.purple_500)
                 )
@@ -99,21 +110,27 @@ fun CalculatorOutputs() {
 
 }
 
-@Composable
-fun CalculatorInputs(){
-    Card ( elevation = 4.dp, shape = RoundedCornerShape(8.dp) ) {
-        Column {
-            CostOfServiceInput()
-            ServiceQualityInput()
-            RoundUpTipInput()
-        }
+fun formatCurrency(amount: Double): String =
+    NumberFormat.getCurrencyInstance().format(amount)
 
+@Composable
+fun CalculatorInputs(
+    costOfServiceInput: String,
+    serviceQuality: ServiceQuality,
+    roundUpTip: Boolean
+) {
+    Card(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
+        Column {
+            CostOfServiceInput(costOfServiceInput = costOfServiceInput)
+            ServiceQualityInput(serviceQuality = serviceQuality)
+            RoundUpTipInput(roundUpTip = roundUpTip)
+        }
     }
 }
 
 @Composable
-fun RoundUpTipInput() {
-    Row (
+fun RoundUpTipInput(roundUpTip: Boolean) {
+    Row(
         modifier = Modifier.padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -123,35 +140,44 @@ fun RoundUpTipInput() {
             fontSize = 20.sp
         )
         Switch(
-            checked = true,
+            checked = roundUpTip,
             onCheckedChange = {},
         )
     }
 }
 
 @Composable
-fun ServiceQualityInput() {
+fun ServiceQualityInput(serviceQuality: ServiceQuality) {
     Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp)) {
         Text(
             text = stringResource(R.string.service_quality_input_label),
             fontSize = 20.sp
         )
-        Row( verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(selected = false, onClick = {  })
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = serviceQuality == ServiceQuality.AMAZING,
+                onClick = { }
+            )
             Text(
                 text = stringResource(id = R.string.quality_amazing_label),
                 fontSize = 18.sp
             )
         }
-        Row( verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(selected = true, onClick = {  })
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = serviceQuality == ServiceQuality.GOOD,
+                onClick = { }
+            )
             Text(
                 text = stringResource(id = R.string.quality_good_label),
                 fontSize = 18.sp
             )
         }
-        Row( verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(selected = false, onClick = {  })
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = serviceQuality == ServiceQuality.OK,
+                onClick = { }
+            )
             Text(
                 text = stringResource(id = R.string.quality_okay_label),
                 fontSize = 18.sp
@@ -161,11 +187,11 @@ fun ServiceQualityInput() {
 }
 
 @Composable
-fun CostOfServiceInput() {
+fun CostOfServiceInput(costOfServiceInput: String) {
     TextField(
         label = { Text(text = stringResource(id = R.string.cost_of_service_label)) },
-        value = "",
-        onValueChange = {  },
+        value = costOfServiceInput,
+        onValueChange = { },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
         modifier = Modifier
