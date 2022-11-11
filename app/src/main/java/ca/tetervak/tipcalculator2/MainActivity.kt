@@ -8,8 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -18,8 +16,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ca.tetervak.tipcalculator2.model.ServiceQuality
-import ca.tetervak.tipcalculator2.model.calculateTip
 import ca.tetervak.tipcalculator2.ui.theme.TipCalculator2Theme
 import java.text.NumberFormat
 
@@ -41,25 +39,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TipCalculatorScreen() {
+fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
 
     // input states
-    val inputUiState = remember { mutableStateOf(InputUiState()) }
-
+    val inputUiState = viewModel.inputUiState
     // output states
-    val outputUiState = remember { mutableStateOf(OutputUiSate()) }
-
-    val recalculateOutputs = {
-        val tipData = calculateTip(
-            costOfService = inputUiState.value.costOfService.toDoubleOrNull() ?: 0.0,
-            serviceQuality = inputUiState.value.serviceQuality,
-            roundUpTip = inputUiState.value.roundUpTip
-        )
-        outputUiState.value = OutputUiSate(
-            tipAmount = tipData.tipAmount,
-            billTotal = tipData.billTotal
-        )
-    }
+    val outputUiState = viewModel.outputUiSate
 
     Column(
         modifier = Modifier
@@ -76,19 +61,13 @@ fun TipCalculatorScreen() {
         CalculatorInputs(
             inputUiState = inputUiState.value,
             onChangeOfCostOfService = {
-                val uiState = inputUiState.value
-                inputUiState.value = uiState.copy(costOfService = it)
-                recalculateOutputs()
+                viewModel.setCostOfService(costOfService = it)
             },
             onChangeOfServiceQuality = {
-                val uiState = inputUiState.value
-                inputUiState.value = uiState.copy(serviceQuality = it)
-                recalculateOutputs()
+                viewModel.setServiceQuality(serviceQuality = it)
             },
             onChangeOfRoundTip = {
-                val uiState = inputUiState.value
-                inputUiState.value = uiState.copy(roundUpTip = it)
-                recalculateOutputs()
+                viewModel.setRoundUpTip(roundUpTip = it)
             }
         )
         CalculatorOutputs(outputUiState.value)
