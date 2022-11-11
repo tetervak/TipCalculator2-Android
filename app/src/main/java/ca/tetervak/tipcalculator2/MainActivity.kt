@@ -45,10 +45,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
 
-    // input state
-    val inputUiState: InputUiState by viewModel.stateInputUiState
-    // output state
-    val outputUiState: OutputUiState by viewModel.stateOutputUiState
+    val calculatorUiState: CalculatorUiState by viewModel.stateCalculatorUiState
 
     Column(
         modifier = Modifier
@@ -62,8 +59,8 @@ fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
             fontSize = 24.sp,
             color = colorResource(id = R.color.pink_500)
         )
-        CalculatorInputs(inputUiState)
-        CalculatorOutputs(outputUiState)
+        CalculatorInputs(calculatorUiState.inputUiState)
+        CalculatorOutputs(calculatorUiState.outputUiState)
     }
 }
 
