@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -44,10 +45,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
 
-    // input states
-    val inputUiState = viewModel.inputUiState
-    // output states
-    val outputUiState = viewModel.outputUiSate
+    // input state
+    val inputUiState: InputUiState by viewModel.stateInputUiState
+    // output state
+    val outputUiState: OutputUiState by viewModel.stateOutputUiState
 
     Column(
         modifier = Modifier
@@ -61,14 +62,14 @@ fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
             fontSize = 24.sp,
             color = colorResource(id = R.color.pink_500)
         )
-        CalculatorInputs(inputUiState.value)
-        CalculatorOutputs(outputUiState.value)
+        CalculatorInputs(inputUiState)
+        CalculatorOutputs(outputUiState)
     }
 }
 
 @Composable
 fun CalculatorOutputs(
-    outputUiSate: OutputUiSate,
+    outputUiSate: OutputUiState,
 ) {
     Card(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {

@@ -9,46 +9,46 @@ import ca.tetervak.tipcalculator2.model.calculateTip
 class MainViewModel : ViewModel() {
 
     // output states
-    private val _outputUiState = mutableStateOf(OutputUiSate())
-    val outputUiSate: State<OutputUiSate> = _outputUiState
+    private val _stateOutputUiState = mutableStateOf(OutputUiState())
+    val stateOutputUiState: State<OutputUiState> = _stateOutputUiState
 
     // input states
-    private val _inputUiState = mutableStateOf(
+    private val _stateInputUiState = mutableStateOf(
         InputUiState().copy(
             onChangeOfCostOfService = { setCostOfService(it) },
             onChangeOfServiceQuality = { setServiceQuality(it) },
             onChangeOfRoundUpTip = { setRoundUpTip(it) }
         )
     )
-    val inputUiState: State<InputUiState> = _inputUiState
+    val stateInputUiState: State<InputUiState> = _stateInputUiState
 
     val recalculateOutputs = {
         val tipData = calculateTip(
-            costOfService = inputUiState.value.costOfService.toDoubleOrNull() ?: 0.0,
-            serviceQuality = inputUiState.value.serviceQuality,
-            roundUpTip = inputUiState.value.roundUpTip
+            costOfService = stateInputUiState.value.costOfService.toDoubleOrNull() ?: 0.0,
+            serviceQuality = stateInputUiState.value.serviceQuality,
+            roundUpTip = stateInputUiState.value.roundUpTip
         )
-        _outputUiState.value = OutputUiSate(
+        _stateOutputUiState.value = OutputUiState(
             tipAmount = tipData.tipAmount,
             billTotal = tipData.billTotal
         )
     }
 
     private fun setCostOfService(costOfService: String) {
-        val newInputUiState = inputUiState.value.copy(costOfService = costOfService)
-        _inputUiState.value = newInputUiState
+        val newInputUiState = stateInputUiState.value.copy(costOfService = costOfService)
+        _stateInputUiState.value = newInputUiState
         recalculateOutputs()
     }
 
     private fun setServiceQuality(serviceQuality: ServiceQuality) {
-        val newInputUiState = inputUiState.value.copy(serviceQuality = serviceQuality)
-        _inputUiState.value = newInputUiState
+        val newInputUiState = stateInputUiState.value.copy(serviceQuality = serviceQuality)
+        _stateInputUiState.value = newInputUiState
         recalculateOutputs()
     }
 
     private fun setRoundUpTip(roundUpTip: Boolean) {
-        val newInputUiState = inputUiState.value.copy(roundUpTip = roundUpTip)
-        _inputUiState.value = newInputUiState
+        val newInputUiState = stateInputUiState.value.copy(roundUpTip = roundUpTip)
+        _stateInputUiState.value = newInputUiState
         recalculateOutputs()
     }
 
