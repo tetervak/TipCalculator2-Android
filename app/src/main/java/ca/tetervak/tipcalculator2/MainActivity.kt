@@ -151,15 +151,15 @@ fun CalculatorInputs(
         Column {
             CostOfServiceInput(
                 costOfServiceInput = costOfServiceInput,
-                onChange = { onChangeOfCostOfService(it) }
+                onChange = onChangeOfCostOfService
             )
             ServiceQualityInput(
                 serviceQuality = serviceQuality,
-                onChange = { onChangeOfServiceQuality(it) }
+                onChange = onChangeOfServiceQuality
             )
             RoundUpTipInput(
                 roundUpTip = roundUpTip,
-                onChange = { onChangeOfRoundTip(it) }
+                onChange = onChangeOfRoundTip
             )
         }
     }
@@ -178,7 +178,7 @@ fun RoundUpTipInput(roundUpTip: Boolean, onChange: (Boolean) -> Unit) {
         )
         Switch(
             checked = roundUpTip,
-            onCheckedChange = { onChange(it) },
+            onCheckedChange = onChange,
         )
     }
 }
@@ -235,7 +235,7 @@ fun CostOfServiceInput(
     TextField(
         label = { Text(text = stringResource(id = R.string.cost_of_service_label)) },
         value = costOfServiceInput,
-        onValueChange = { onChange(it) },
+        onValueChange =  onChange,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done
