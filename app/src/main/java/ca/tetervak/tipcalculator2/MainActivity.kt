@@ -51,19 +51,13 @@ fun TipCalculatorScreen() {
     val serviceQualityInput = remember { mutableStateOf(ServiceQuality.GOOD) }
     val roundUpTipInput = remember { mutableStateOf(true) }
 
-    // output states
-    val tipAmountOutput = remember { mutableStateOf(0.0) }
-    val billTotalOutput = remember { mutableStateOf(0.0) }
-
-    val recalculateOutputs = {
-        val tipData = calculateTip(
-            costOfService = costOfServiceInput.value.toDoubleOrNull() ?: 0.0,
-            serviceQuality = serviceQualityInput.value,
-            roundUpTip = roundUpTipInput.value
-        )
-        tipAmountOutput.value = tipData.tipAmount
-        billTotalOutput.value = tipData.billTotal
-    }
+    val tipData = calculateTip(
+        costOfService = costOfServiceInput.value.toDoubleOrNull() ?: 0.0,
+        serviceQuality = serviceQualityInput.value,
+        roundUpTip = roundUpTipInput.value
+    )
+    val tipAmountOutput = tipData.tipAmount
+    val billTotalOutput = tipData.billTotal
 
     Column(
         modifier = Modifier
@@ -83,20 +77,17 @@ fun TipCalculatorScreen() {
             roundUpTip = roundUpTipInput.value,
             onChangeOfCostOfService = {
                 costOfServiceInput.value = it
-                recalculateOutputs()
             },
             onChangeOfServiceQuality = {
                 serviceQualityInput.value = it
-                recalculateOutputs()
             },
             onChangeOfRoundTip = {
                 roundUpTipInput.value = it
-                recalculateOutputs()
             }
         )
         CalculatorOutputs(
-            tipAmount = tipAmountOutput.value,
-            billTotal = billTotalOutput.value
+            tipAmount = tipAmountOutput,
+            billTotal = billTotalOutput
         )
 
     }
