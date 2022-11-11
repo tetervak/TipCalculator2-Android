@@ -58,18 +58,7 @@ fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
             fontSize = 24.sp,
             color = colorResource(id = R.color.pink_500)
         )
-        CalculatorInputs(
-            inputUiState = inputUiState.value,
-            onChangeOfCostOfService = {
-                viewModel.setCostOfService(costOfService = it)
-            },
-            onChangeOfServiceQuality = {
-                viewModel.setServiceQuality(serviceQuality = it)
-            },
-            onChangeOfRoundTip = {
-                viewModel.setRoundUpTip(roundUpTip = it)
-            }
-        )
+        CalculatorInputs(inputUiState.value)
         CalculatorOutputs(outputUiState.value)
     }
 }
@@ -123,24 +112,21 @@ fun formatCurrency(amount: Double): String =
 
 @Composable
 fun CalculatorInputs(
-    inputUiState: InputUiState,
-    onChangeOfCostOfService: (String) -> Unit,
-    onChangeOfServiceQuality: (ServiceQuality) -> Unit,
-    onChangeOfRoundTip: (Boolean) -> Unit
+    inputUiState: InputUiState
 ) {
     Card(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
         Column {
             CostOfServiceInput(
                 costOfServiceInput = inputUiState.costOfService,
-                onChange = { onChangeOfCostOfService(it) }
+                onChange = { inputUiState.onChangeOfCostOfService(it) }
             )
             ServiceQualityInput(
                 serviceQuality = inputUiState.serviceQuality,
-                onChange = { onChangeOfServiceQuality(it) }
+                onChange = { inputUiState.onChangeOfServiceQuality(it) }
             )
             RoundUpTipInput(
                 roundUpTip = inputUiState.roundUpTip,
-                onChange = { onChangeOfRoundTip(it) }
+                onChange = { inputUiState.onChangeOfRoundUpTip(it) }
             )
         }
     }

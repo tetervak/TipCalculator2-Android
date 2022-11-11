@@ -6,15 +6,21 @@ import androidx.lifecycle.ViewModel
 import ca.tetervak.tipcalculator2.model.ServiceQuality
 import ca.tetervak.tipcalculator2.model.calculateTip
 
-class MainViewModel: ViewModel() {
-
-    // input states
-    private val _inputUiState = mutableStateOf(InputUiState())
-    val inputUiState: State<InputUiState> = _inputUiState
+class MainViewModel : ViewModel() {
 
     // output states
     private val _outputUiState = mutableStateOf(OutputUiSate())
     val outputUiSate: State<OutputUiSate> = _outputUiState
+
+    // input states
+    private val _inputUiState = mutableStateOf(
+        InputUiState().copy(
+            onChangeOfCostOfService = { setCostOfService(it) },
+            onChangeOfServiceQuality = { setServiceQuality(it) },
+            onChangeOfRoundUpTip = { setRoundUpTip(it) }
+        )
+    )
+    val inputUiState: State<InputUiState> = _inputUiState
 
     val recalculateOutputs = {
         val tipData = calculateTip(
@@ -28,19 +34,19 @@ class MainViewModel: ViewModel() {
         )
     }
 
-    fun setCostOfService(costOfService: String) {
+    private fun setCostOfService(costOfService: String) {
         val newInputUiState = inputUiState.value.copy(costOfService = costOfService)
         _inputUiState.value = newInputUiState
         recalculateOutputs()
     }
 
-    fun setServiceQuality(serviceQuality: ServiceQuality){
+    private fun setServiceQuality(serviceQuality: ServiceQuality) {
         val newInputUiState = inputUiState.value.copy(serviceQuality = serviceQuality)
         _inputUiState.value = newInputUiState
         recalculateOutputs()
     }
 
-    fun setRoundUpTip(roundUpTip: Boolean){
+    private fun setRoundUpTip(roundUpTip: Boolean) {
         val newInputUiState = inputUiState.value.copy(roundUpTip = roundUpTip)
         _inputUiState.value = newInputUiState
         recalculateOutputs()
