@@ -9,6 +9,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,14 +49,14 @@ class MainActivity : ComponentActivity() {
 fun TipCalculatorScreen() {
 
     // input states
-    val costOfServiceInput = remember { mutableStateOf("") }
-    val serviceQualityInput = remember { mutableStateOf(ServiceQuality.GOOD) }
-    val roundUpTipInput = remember { mutableStateOf(true) }
+    var costOfServiceInput by remember { mutableStateOf("") }
+    var serviceQualityInput by remember { mutableStateOf(ServiceQuality.GOOD) }
+    var roundUpTipInput by remember { mutableStateOf(true) }
 
     val tipData = calculateTip(
-        costOfService = costOfServiceInput.value.toDoubleOrNull() ?: 0.0,
-        serviceQuality = serviceQualityInput.value,
-        roundUpTip = roundUpTipInput.value
+        costOfService = costOfServiceInput.toDoubleOrNull() ?: 0.0,
+        serviceQuality = serviceQualityInput,
+        roundUpTip = roundUpTipInput
     )
     val tipAmountOutput = tipData.tipAmount
     val billTotalOutput = tipData.billTotal
@@ -72,17 +74,17 @@ fun TipCalculatorScreen() {
             color = colorResource(id = R.color.pink_500)
         )
         CalculatorInputs(
-            costOfServiceInput = costOfServiceInput.value,
-            serviceQuality = serviceQualityInput.value,
-            roundUpTip = roundUpTipInput.value,
+            costOfServiceInput = costOfServiceInput,
+            serviceQuality = serviceQualityInput,
+            roundUpTip = roundUpTipInput,
             onChangeOfCostOfService = {
-                costOfServiceInput.value = it
+                costOfServiceInput = it
             },
             onChangeOfServiceQuality = {
-                serviceQualityInput.value = it
+                serviceQualityInput = it
             },
             onChangeOfRoundTip = {
-                roundUpTipInput.value = it
+                roundUpTipInput = it
             }
         )
         CalculatorOutputs(
