@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
 
-    val calculatorUiState: CalculatorUiState by viewModel.flowUiState.collectAsState()
+    val calculatorUiState: CalculatorUiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 
 class MainViewModel : ViewModel() {
 
-    private val _flowUiState = MutableStateFlow(
+    private val _uiState = MutableStateFlow(
         CalculatorUiState(
             inputUiState = InputUiState().copy(
                 onChangeOfCostOfService = { setCostOfService(it) },
@@ -20,7 +20,7 @@ class MainViewModel : ViewModel() {
             outputUiState = OutputUiState()
         )
     )
-    val flowUiState: StateFlow<CalculatorUiState> = _flowUiState.asStateFlow()
+    val uiState: StateFlow<CalculatorUiState> = _uiState.asStateFlow()
 
     private fun recalculateOutputs(inputUiState: InputUiState): OutputUiState {
         val tipData = calculateTip(
@@ -35,7 +35,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun setCostOfService(costOfService: String) {
-        _flowUiState.update { uiState ->
+        _uiState.update { uiState ->
             val newInputUiState = uiState.inputUiState.copy(costOfService = costOfService)
             CalculatorUiState(
                 inputUiState = newInputUiState,
@@ -45,7 +45,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun setServiceQuality(serviceQuality: ServiceQuality) {
-        _flowUiState.update { uiState ->
+        _uiState.update { uiState ->
             val newInputUiState = uiState.inputUiState.copy(serviceQuality = serviceQuality)
             CalculatorUiState(
                 inputUiState = newInputUiState,
@@ -55,7 +55,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun setRoundUpTip(roundUpTip: Boolean) {
-        _flowUiState.update { uiState ->
+        _uiState.update { uiState ->
             val newInputUiState = uiState.inputUiState.copy(roundUpTip = roundUpTip)
             CalculatorUiState(
                 inputUiState = newInputUiState,
