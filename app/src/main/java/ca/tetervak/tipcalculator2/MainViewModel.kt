@@ -37,7 +37,7 @@ class MainViewModel : ViewModel() {
     private fun setCostOfService(costOfService: String) {
         _uiState.update { uiState ->
             val newInputUiState = uiState.inputUiState.copy(costOfService = costOfService)
-            CalculatorUiState(
+            uiState.copy(
                 inputUiState = newInputUiState,
                 outputUiState = recalculateOutputs(newInputUiState)
             )
@@ -47,7 +47,7 @@ class MainViewModel : ViewModel() {
     private fun setServiceQuality(serviceQuality: ServiceQuality) {
         _uiState.update { uiState ->
             val newInputUiState = uiState.inputUiState.copy(serviceQuality = serviceQuality)
-            CalculatorUiState(
+            uiState.copy(
                 inputUiState = newInputUiState,
                 outputUiState = recalculateOutputs(newInputUiState)
             )
@@ -57,7 +57,7 @@ class MainViewModel : ViewModel() {
     private fun setRoundUpTip(roundUpTip: Boolean) {
         _uiState.update { uiState ->
             val newInputUiState = uiState.inputUiState.copy(roundUpTip = roundUpTip)
-            CalculatorUiState(
+            uiState.copy(
                 inputUiState = newInputUiState,
                 outputUiState = recalculateOutputs(newInputUiState)
             )
