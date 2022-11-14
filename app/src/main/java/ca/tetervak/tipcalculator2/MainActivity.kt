@@ -31,12 +31,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TipCalculator2Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
+                Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) }
                 ) {
-                    TipCalculatorScreen()
+
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize().padding(it),
+                        color = MaterialTheme.colors.background
+                    ) {
+                        TipCalculatorScreen()
+                    }
                 }
             }
         }
