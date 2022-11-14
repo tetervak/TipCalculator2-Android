@@ -1,14 +1,16 @@
 package ca.tetervak.tipcalculator2
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import ca.tetervak.tipcalculator2.model.ServiceQuality
 import ca.tetervak.tipcalculator2.model.calculateTip
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class MainViewModel : ViewModel() {
 
-    private val _stateCalculatorUiState = mutableStateOf(
+    private val _flowUiState = MutableStateFlow(
         CalculatorUiState(
             inputUiState = InputUiState().copy(
                 onChangeOfCostOfService = { setCostOfService(it) },
@@ -18,10 +20,7 @@ class MainViewModel : ViewModel() {
             outputUiState = OutputUiState()
         )
     )
-    val stateCalculatorUiState: State<CalculatorUiState> = _stateCalculatorUiState
-
-    private val inputUiState: InputUiState
-        get() = stateCalculatorUiState.value.inputUiState
+    val flowUiState: StateFlow<CalculatorUiState> = _flowUiState.asStateFlow()
 
     private fun recalculateOutputs(inputUiState: InputUiState): OutputUiState {
         val tipData = calculateTip(
@@ -36,27 +35,33 @@ class MainViewModel : ViewModel() {
     }
 
     private fun setCostOfService(costOfService: String) {
-        val newInputUiState = inputUiState.copy(costOfService = costOfService)
-        _stateCalculatorUiState.value = CalculatorUiState(
-            inputUiState = newInputUiState,
-            outputUiState = recalculateOutputs(newInputUiState)
-        )
+        _flowUiState.update { uiState ->
+            val newInputUiState = uiState.inputUiState.copy(costOfService = costOfService)
+            CalculatorUiState(
+                inputUiState = newInputUiState,
+                outputUiState = recalculateOutputs(newInputUiState)
+            )
+        }
     }
 
     private fun setServiceQuality(serviceQuality: ServiceQuality) {
-        val newInputUiState = inputUiState.copy(serviceQuality = serviceQuality)
-        _stateCalculatorUiState.value = CalculatorUiState(
-            inputUiState = newInputUiState,
-            outputUiState = recalculateOutputs(newInputUiState)
-        )
+        _flowUiState.update { uiState ->
+            val newInputUiState = uiState.inputUiState.copy(serviceQuality = serviceQuality)
+            CalculatorUiState(
+                inputUiState = newInputUiState,
+                outputUiState = recalculateOutputs(newInputUiState)
+            )
+        }
     }
 
     private fun setRoundUpTip(roundUpTip: Boolean) {
-        val newInputUiState = inputUiState.copy(roundUpTip = roundUpTip)
-        _stateCalculatorUiState.value = CalculatorUiState(
-            inputUiState = newInputUiState,
-            outputUiState = recalculateOutputs(newInputUiState)
-        )
+        _flowUiState.update { uiState ->
+            val newInputUiState = uiState.inputUiState.copy(roundUpTip = roundUpTip)
+            CalculatorUiState(
+                inputUiState = newInputUiState,
+                outputUiState = recalculateOutputs(newInputUiState)
+            )
+        }
     }
 
 }

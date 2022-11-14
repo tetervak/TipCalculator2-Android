@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
 
-    val calculatorUiState: CalculatorUiState by viewModel.stateCalculatorUiState
+    val calculatorUiState: CalculatorUiState by viewModel.flowUiState.collectAsState()
 
     Column(
         modifier = Modifier
