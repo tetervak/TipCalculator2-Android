@@ -8,11 +8,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -76,6 +75,7 @@ fun CalculatorOutputs(
     outputUiSate: OutputUiState,
 ) {
     Card(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
+        var labelWidth by remember { mutableStateOf(0) }
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -84,8 +84,14 @@ fun CalculatorOutputs(
                     text = stringResource(R.string.tip_amount_label),
                     fontSize = 20.sp,
                     modifier = Modifier
-                        .sizeIn(minWidth = 112.dp)
-                        .wrapContentWidth(align = Alignment.End)
+                        .layout(measure = { measurable, constraints ->
+                            val placeable = measurable.measure(constraints)
+                            val width = placeable.width
+                            labelWidth = maxOf(width, labelWidth)
+                            layout(width = labelWidth, height = placeable.height){
+                                placeable.placeRelative(labelWidth - width,0)
+                            }
+                        })
                 )
                 Text(
                     text = formatCurrency(outputUiSate.tipAmount),
@@ -101,8 +107,15 @@ fun CalculatorOutputs(
                     text = stringResource(R.string.bill_total_label),
                     fontSize = 20.sp,
                     modifier = Modifier
-                        .sizeIn(minWidth = 112.dp)
-                        .wrapContentWidth(align = Alignment.End)
+                        .layout(measure = { measurable, constraints ->
+                            val placeable = measurable.measure(constraints)
+                            val width = placeable.width
+                            labelWidth = maxOf(width, labelWidth)
+                            layout(width = labelWidth, height = placeable.height){
+                                placeable.placeRelative(labelWidth - width,0)
+                            }
+                        })
+
                 )
                 Text(
                     text = formatCurrency(outputUiSate.billTotal),
