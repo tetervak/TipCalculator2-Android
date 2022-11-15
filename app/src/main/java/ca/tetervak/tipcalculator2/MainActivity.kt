@@ -37,7 +37,9 @@ class MainActivity : ComponentActivity() {
 
                     // A surface container using the 'background' color from the theme
                     Surface(
-                        modifier = Modifier.fillMaxSize().padding(it),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
                         color = MaterialTheme.colors.background
                     ) {
                         TipCalculatorScreen()
@@ -62,8 +64,7 @@ fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
     ) {
         Text(
             text = stringResource(R.string.tip_calculator_header),
-            fontSize = 24.sp,
-            color = colorResource(id = R.color.pink_500)
+            style = MaterialTheme.typography.h1
         )
         CalculatorInputs(calculatorUiState.inputUiState)
         CalculatorOutputs(calculatorUiState.outputUiState)
@@ -82,7 +83,7 @@ fun CalculatorOutputs(
             ) {
                 Text(
                     text = stringResource(R.string.tip_amount_label),
-                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.h2,
                     modifier = Modifier
                         .layout(measure = { measurable, constraints ->
                             val placeable = measurable.measure(constraints)
@@ -93,11 +94,7 @@ fun CalculatorOutputs(
                             }
                         })
                 )
-                Text(
-                    text = formatCurrency(outputUiSate.tipAmount),
-                    fontSize = 20.sp,
-                    color = colorResource(id = R.color.purple_500)
-                )
+                CurrencyOutput(amount = outputUiSate.tipAmount)
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -105,7 +102,7 @@ fun CalculatorOutputs(
             ) {
                 Text(
                     text = stringResource(R.string.bill_total_label),
-                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.h2,
                     modifier = Modifier
                         .layout(measure = { measurable, constraints ->
                             val placeable = measurable.measure(constraints)
@@ -117,15 +114,20 @@ fun CalculatorOutputs(
                         })
 
                 )
-                Text(
-                    text = formatCurrency(outputUiSate.billTotal),
-                    fontSize = 20.sp,
-                    color = colorResource(id = R.color.purple_500)
-                )
+                CurrencyOutput(amount = outputUiSate.billTotal)
             }
         }
     }
 
+}
+
+@Composable
+fun CurrencyOutput(amount: Double){
+    Text(
+        text = formatCurrency(amount),
+        style = MaterialTheme.typography.h2,
+        color = colorResource(id = R.color.purple_500)
+    )
 }
 
 fun formatCurrency(amount: Double): String =
@@ -162,7 +164,7 @@ fun RoundUpTipInput(roundUpTip: Boolean, onChange: (Boolean) -> Unit) {
     ) {
         Text(
             text = stringResource(R.string.round_up_tip_input_label),
-            fontSize = 20.sp
+            style = MaterialTheme.typography.h2
         )
         Switch(
             checked = roundUpTip,
@@ -179,7 +181,7 @@ fun ServiceQualityInput(
     Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp)) {
         Text(
             text = stringResource(R.string.service_quality_input_label),
-            fontSize = 20.sp
+            style = MaterialTheme.typography.h2
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
@@ -188,7 +190,7 @@ fun ServiceQualityInput(
             )
             Text(
                 text = stringResource(id = R.string.quality_amazing_label),
-                fontSize = 18.sp
+                style = MaterialTheme.typography.body1
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -198,7 +200,7 @@ fun ServiceQualityInput(
             )
             Text(
                 text = stringResource(id = R.string.quality_good_label),
-                fontSize = 18.sp
+                style = MaterialTheme.typography.body1
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -208,7 +210,7 @@ fun ServiceQualityInput(
             )
             Text(
                 text = stringResource(id = R.string.quality_okay_label),
-                fontSize = 18.sp
+                style = MaterialTheme.typography.body1
             )
         }
     }
