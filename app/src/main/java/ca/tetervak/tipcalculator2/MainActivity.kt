@@ -30,16 +30,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TipCalculator2Theme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) }
-                ) {
-
                     // A surface container using the 'background' color from the theme
                     Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(it),
+                        modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
                         TipCalculatorScreen()
@@ -48,7 +41,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
 @Composable
 fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
