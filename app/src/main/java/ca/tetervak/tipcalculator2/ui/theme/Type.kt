@@ -14,7 +14,7 @@ val Typography = Typography(
         fontSize = 18.sp
     ),
     h1 = TextStyle(
-        fontSize = 24.sp,
+        fontSize = 32.sp,
         color = Pink500
     ),
     h2 = TextStyle(
