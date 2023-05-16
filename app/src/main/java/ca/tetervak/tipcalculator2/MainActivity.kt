@@ -8,9 +8,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
@@ -19,33 +23,87 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ca.tetervak.tipcalculator2.model.ServiceQuality
 import ca.tetervak.tipcalculator2.ui.theme.TipCalculator2Theme
 import java.text.NumberFormat
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TipCalculator2Theme {
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colors.background
-                    ) {
-                        TipCalculatorScreen()
-                    }
+                val windowSize = calculateWindowSizeClass(this)
+                if (windowSize.heightSizeClass == WindowHeightSizeClass.Compact) {
+                    TipCalculatorCompactHeightScreen()
+                } else {
+                    TipCalculatorDefaultScreen()
                 }
             }
         }
     }
+}
 
 @Composable
-fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
+fun TipCalculatorCompactHeightScreen(viewModel: MainViewModel = viewModel()) {
 
     val calculatorUiState: CalculatorUiState by viewModel.uiState.collectAsState()
+    val inputUiState = calculatorUiState.inputUiState
+
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .wrapContentWidth()
+                .padding(32.dp)
+                .weight(1f),
+        ){
+            Text(
+                text = stringResource(R.string.tip_calculator_header),
+                style = MaterialTheme.typography.h1
+            )
+            ServiceQualityInput(
+                serviceQuality = inputUiState.serviceQuality,
+                onChange = inputUiState.onChangeOfServiceQuality
+            )
+        }
+        Divider(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(1.dp)
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .wrapContentWidth()
+                .padding(32.dp)
+                .weight(1f)
+        ) {
+            CostOfServiceInput(
+                costOfServiceInput = inputUiState.costOfService,
+                onChange = inputUiState.onChangeOfCostOfService,
+                modifier = Modifier.sizeIn(minWidth = 192.dp)
+            )
+            RoundUpTipInput(
+                roundUpTip = inputUiState.roundUpTip,
+                onChange = inputUiState.onChangeOfRoundUpTip
+            )
+            Divider()
+            CalculatorOutputs(calculatorUiState.outputUiState)
+        }
+    }
+}
+
+@Composable
+fun TipCalculatorDefaultScreen(viewModel: MainViewModel = viewModel()) {
+
+    val calculatorUiState: CalculatorUiState by viewModel.uiState.collectAsState()
+    val inputUiState = calculatorUiState.inputUiState
 
     Column(
         modifier = Modifier
@@ -58,7 +116,23 @@ fun TipCalculatorScreen(viewModel: MainViewModel = viewModel()) {
             text = stringResource(R.string.tip_calculator_header),
             style = MaterialTheme.typography.h1
         )
-        CalculatorInputs(calculatorUiState.inputUiState)
+        //CalculatorInputs(calculatorUiState.inputUiState)
+        ServiceQualityInput(
+            serviceQuality = inputUiState.serviceQuality,
+            onChange = inputUiState.onChangeOfServiceQuality,
+            //modifier = Modifier.padding(start = 16.dp, top = 8.dp)
+        )
+        CostOfServiceInput(
+            costOfServiceInput = inputUiState.costOfService,
+            onChange = inputUiState.onChangeOfCostOfService,
+            modifier = Modifier.sizeIn(minWidth = 192.dp)
+        )
+        RoundUpTipInput(
+            roundUpTip = inputUiState.roundUpTip,
+            onChange = inputUiState.onChangeOfRoundUpTip,
+            //modifier = Modifier.padding(16.dp)
+        )
+        Divider()
         CalculatorOutputs(calculatorUiState.outputUiState)
     }
 }
@@ -81,8 +155,8 @@ fun CalculatorOutputs(
                             val placeable = measurable.measure(constraints)
                             val width = placeable.width
                             labelWidth = maxOf(width, labelWidth)
-                            layout(width = labelWidth, height = placeable.height){
-                                placeable.placeRelative(labelWidth - width,0)
+                            layout(width = labelWidth, height = placeable.height) {
+                                placeable.placeRelative(labelWidth - width, 0)
                             }
                         })
                 )
@@ -100,8 +174,8 @@ fun CalculatorOutputs(
                             val placeable = measurable.measure(constraints)
                             val width = placeable.width
                             labelWidth = maxOf(width, labelWidth)
-                            layout(width = labelWidth, height = placeable.height){
-                                placeable.placeRelative(labelWidth - width,0)
+                            layout(width = labelWidth, height = placeable.height) {
+                                placeable.placeRelative(labelWidth - width, 0)
                             }
                         })
 
@@ -114,7 +188,7 @@ fun CalculatorOutputs(
 }
 
 @Composable
-fun CurrencyOutput(amount: Double){
+fun CurrencyOutput(amount: Double) {
     Text(
         text = formatCurrency(amount),
         style = MaterialTheme.typography.h2,
@@ -126,31 +200,13 @@ fun formatCurrency(amount: Double): String =
     NumberFormat.getCurrencyInstance().format(amount)
 
 @Composable
-fun CalculatorInputs(
-    inputUiState: InputUiState
+fun RoundUpTipInput(
+    roundUpTip: Boolean,
+    onChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Card(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
-        Column {
-            CostOfServiceInput(
-                costOfServiceInput = inputUiState.costOfService,
-                onChange = inputUiState.onChangeOfCostOfService
-            )
-            ServiceQualityInput(
-                serviceQuality = inputUiState.serviceQuality,
-                onChange = inputUiState.onChangeOfServiceQuality
-            )
-            RoundUpTipInput(
-                roundUpTip = inputUiState.roundUpTip,
-                onChange = inputUiState.onChangeOfRoundUpTip
-            )
-        }
-    }
-}
-
-@Composable
-fun RoundUpTipInput(roundUpTip: Boolean, onChange: (Boolean) -> Unit) {
     Row(
-        modifier = Modifier.padding(16.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -168,9 +224,10 @@ fun RoundUpTipInput(roundUpTip: Boolean, onChange: (Boolean) -> Unit) {
 @Composable
 fun ServiceQualityInput(
     serviceQuality: ServiceQuality,
-    onChange: (ServiceQuality) -> Unit
+    onChange: (ServiceQuality) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp)) {
+    Column(modifier = modifier) {
         Text(
             text = stringResource(R.string.service_quality_input_label),
             style = MaterialTheme.typography.h2
@@ -211,7 +268,8 @@ fun ServiceQualityInput(
 @Composable
 fun CostOfServiceInput(
     costOfServiceInput: String,
-    onChange: (String) -> Unit
+    onChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
     TextField(
@@ -226,9 +284,7 @@ fun CostOfServiceInput(
             onDone = { focusManager.clearFocus() }
         ),
         singleLine = true,
-        modifier = Modifier
-            .padding(16.dp)
-            .sizeIn(minWidth = 256.dp)
+        modifier = modifier
     )
 }
 
@@ -236,6 +292,6 @@ fun CostOfServiceInput(
 @Composable
 fun DefaultPreview() {
     TipCalculator2Theme {
-        TipCalculatorScreen()
+        TipCalculatorDefaultScreen()
     }
 }
